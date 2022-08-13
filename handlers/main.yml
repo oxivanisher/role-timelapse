@@ -1,6 +1,6 @@
 ---
 
-- name:  restart lighttpd
+- name: restart lighttpd
   ansible.builtin.service:
     name: lighttpd
     state: restarted

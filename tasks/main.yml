@@ -58,7 +58,7 @@
   ansible.builtin.systemd:
     name: lighttpd.service
     state: started
-    enabled: yes
+    enabled: true
 
 - name: deploy index.html file
   ansible.builtin.copy:
