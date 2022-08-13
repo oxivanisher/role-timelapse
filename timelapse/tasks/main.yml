@@ -1,0 +1,99 @@
+---
+
+- name: install required package
+  ansible.builtin.package:
+    name: rsync
+    state: present
+
+- name: disable motion service
+  ansible.builtin.systemd:
+    name: motion
+    masked: yes
+
+- name: ensure path for scripts (/opt/timelapse)
+  ansible.builtin.file:
+    path: /opt/timelapse
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: deploy timelapse script
+  ansible.builtin.template:
+    src: timelapse.py.jinja2
+    dest: /opt/timelapse/timelapse.py
+    owner: root
+    group: root
+    mode: '0750'
+  notify: kill timelapse.py
+
+- name: ensure timelapse cronjob
+  ansible.builtin.cron:
+    name: "Take timelapse pictures"
+    minute: "*"
+    hour: "*"
+    job: "/usr/bin/python3 /opt/timelapse/timelapse.py"
+
+- name: deploy timelapse sync script
+  ansible.builtin.template:
+    src: timelapse-sync.sh.jinja2
+    dest: /opt/timelapse/timelapse-sync.sh
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: ensure timelapse upload cronjob
+  ansible.builtin.cron:
+    name: "Sync timelapse pictures"
+    minute: "*/5"
+    hour: "*"
+    job: "perl -le 'sleep rand 150' && /opt/timelapse/timelapse-sync.sh >/dev/null"
+
+- name: install lighttpd server and imagemagick
+  ansible.builtin.package:
+    name: ['lighttpd', 'imagemagick']
+    state: present
+
+- name: ensure lighttpd is enabled
+  ansible.builtin.systemd:
+    name: lighttpd.service
+    state: started
+    enabled: yes
+
+- name: deploy index.html file
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+# ensure mounted boot
+- name: mount boot
+  ansible.posix.mount:
+    path: /boot
+    state: mounted
+    src: /dev/mmcblk0p1
+    fstype: vfat
+  changed_when: False
+
+- name: "set config.txt for greyworld awb to {{ timelapse_greyworld_awb }}"
+  ansible.builtin.lineinfile:
+    path: /boot/config.txt
+    regexp: '^awb_auto_is_greyworld'
+    line: "awb_auto_is_greyworld={{ timelapse_greyworld_awb }}"
+  notify: reboot required
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "ensure the tl upload server can be looked up"
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "timelapse_upload_server ipv4"
+    line: "{{ timelapse_upload_server_ip }}      {{ timelapse_upload_server }} #timelapse_upload_server ipv4"
+
+- name: "ensure the tl upload server can be looked up via ipv6"
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "timelapse_upload_server ipv6"
+    line: "{{ timelapse_upload_server_ip6 }}      {{ timelapse_upload_server }} #timelapse_upload_server ipv6"
+
