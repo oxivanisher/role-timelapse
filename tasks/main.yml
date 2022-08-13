@@ -8,7 +8,7 @@
 - name: disable motion service
   ansible.builtin.systemd:
     name: motion
-    masked: yes
+    masked: true
 
 - name: ensure path for scripts (/opt/timelapse)
   ansible.builtin.file:
@@ -75,7 +75,7 @@
     state: mounted
     src: /dev/mmcblk0p1
     fstype: vfat
-  changed_when: False
+  changed_when: false
 
 - name: "set config.txt for greyworld awb to {{ timelapse_greyworld_awb }}"
   ansible.builtin.lineinfile:
@@ -96,4 +96,3 @@
     path: /etc/hosts
     regexp: "timelapse_upload_server ipv6"
     line: "{{ timelapse_upload_server_ip6 }}      {{ timelapse_upload_server }} #timelapse_upload_server ipv6"
-
