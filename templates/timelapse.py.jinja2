@@ -1,0 +1,158 @@
+#!/bin/bin/env python3
+
+import time
+import os
+import logging
+import subprocess
+import atexit
+import shutil
+from datetime import datetime
+
+# Setting variables
+base_dir = "/tmp"
+working_dir = os.path.join(base_dir, "timelapse")
+liveview_dir = "/var/www/html"
+lock_file_name = "/tmp/timelapse.lock"
+kill_file_name = "/tmp/timelapse.kill"
+reboot_file_name = "/tmp/timelapse.needs_reboot"
+loop_time = 30
+free_megs_cleanup = 50
+timeout_counter = 0
+max_runtime = time.time() + 24 * 60 * 60
+
+log_level = logging.WARNING
+if os.environ.get("DEBUG", "false").lower() == "true":
+  log_level = logging.DEBUG
+
+logging.basicConfig(
+  format='%(asctime)s %(levelname)-7s %(message)s',
+  datefmt='%Y-%d-%m %H:%M:%S',
+  level=log_level
+)
+
+def remove_lock():
+  logging.info('Exiting and removing lock file')
+  os.unlink(lock_file_name)
+
+def get_free_megs(location):
+  total, used, free = shutil.disk_usage(location)
+  free_megs = free/1024/1024
+  logging.debug("Calculated free megs: %s" % free_megs)
+  return free_megs
+
+def remove_oldest_file(location):
+  file_ages = {}
+  for dirpath, dirnames, filenames in os.walk(location):
+    for file in filenames:
+        curpath = os.path.join(dirpath, file)
+        file_ages[os.path.getmtime(curpath)] = curpath
+
+  oldest_file_ts = sorted(file_ages.keys())[0]
+  logging.debug("Removing oldest file: %s" % file_ages[oldest_file_ts])
+  os.remove(file_ages[oldest_file_ts])
+
+def reboot_required():
+  with open(reboot_file_name, 'a') as reboot_file:
+    now = datetime.now()
+    date_time = now.strftime("%Y-%m-%d, %H:%M:%S")
+    reboot_file.write('Reboot required at %s' % date_time)
+
+# Check for lockfile
+if os.path.isfile(lock_file_name):
+  logging.debug("Lockfile already exists, so the daemon is already running. This is good! Exiting")
+  exit(0)
+else:
+  # not existing, so creating one
+  with open(lock_file_name, 'a') as lock_file:
+    now = datetime.now()
+    date_time = now.strftime("%Y-%m-%d, %H:%M:%S")
+    lock_file.write('Started up %s' % date_time)
+    # Ensure logfile removal
+    atexit.register(remove_lock)
+
+# Script startup
+now = datetime.now()
+logging.info('Starting up')
+
+# Looping forever
+while True:
+  ret = False
+  now = datetime.now()
+  loop_start = time.time()
+  date_str = now.strftime("%Y-%m-%d")
+  time_string = now.strftime("%H%M%S.jpg")
+  target_file_path = os.path.join(working_dir, date_str, time_string)
+  target_liveview_path = os.path.join(liveview_dir, "latest.jpg")
+
+  # Check for killfile
+  if os.path.isfile(kill_file_name):
+    logging.warning("Killfile found. Cleaning up and exiting.")
+    os.unlink(kill_file_name)
+    exit(0)
+
+  # Check for enough free storage
+  while True:
+    free_megs = get_free_megs(base_dir)
+    if free_megs < free_megs_cleanup:
+      logging.warning("Deleting oldest file before taking a picture because free storage (%s) of %s is less than %s megs" % (free_megs, working_dir, free_megs_cleanup))
+      remove_oldest_file(working_dir)
+    else:
+      break
+
+  # Create basedir if it not exists
+  if not os.path.isdir(working_dir):
+    os.mkdir(working_dir)
+  if not os.path.isdir(liveview_dir):
+    os.mkdir(liveview_dir)
+
+  # Create today if it not exists
+  if not os.path.isdir(os.path.join(working_dir, date_str)):
+    os.mkdir(os.path.join(working_dir, date_str))
+
+
+  logging.debug('Taking picture')
+  try:
+    ret = subprocess.call(["raspistill",
+                           "--nopreview",
+                           "--awb", "{{ timelapse_awb }}",
+                           "--exposure", "{{ timelapse_exposure }}",
+                           "--brightness", "{{ timelapse_brightness }}",
+                           "-o", target_file_path],
+                          timeout=loop_time-15, stdout=subprocess.DEVNULL)
+    timeout_counter = 0
+  except subprocess.TimeoutExpired:
+    timeout_counter += 1
+
+  if ret:
+    logging.warning("Aborting current loop, because raspistill had some error. Waiting 3 seconds and restarting loop.")
+    time.sleep(3)
+    continue
+
+  if timeout_counter > 2:
+    logging.error("Reached 3 timeouts. Rebooting pi to battle this stupid bug")
+    reboot_required()
+    break
+
+  logging.debug('Copy to live-view picture')
+  ret = subprocess.call(["/usr/bin/convert", "-resize", "35%", target_file_path, target_liveview_path],
+                        timeout=10, stdout=subprocess.DEVNULL)
+  if ret:
+    logging.warning("Aborting current loop, because convert had some error. Waiting 3 seconds and restarting loop.")
+    time.sleep(3)
+    continue
+
+  subprocess.call(["chown", "www-data:www-data", target_liveview_path],
+                  timeout=2, stdout=subprocess.DEVNULL)
+
+  logging.debug('Uploading image to live viewer in background')
+  subprocess.Popen(["curl", "--fail", "--silent", "--show-error", "-X", "POST", "--form", "file=@\"%s\"" % target_liveview_path,
+                    "--form", "upload_key=%s" % "{{ timelapse_upload_key }}",  "{{ timelapse_upload_protocol }}://{{ timelapse_upload_server }}/upload/{{ inventory_hostname }}.jpg"],
+                   stdout=subprocess.DEVNULL)
+
+  if time.time() > max_runtime:
+    logging.debug("Exiting to flush all the tings and such.")
+    exit(0)
+
+  sleep_time = loop_time - (time.time() - loop_start)
+  if sleep_time > 0:
+    time.sleep(sleep_time)
