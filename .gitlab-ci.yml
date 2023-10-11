@@ -1,11 +1,8 @@
-image: $CI_REGISTRY/thunderbluff/ansible-linter:latest
+---
+include:
+  - project: 'ansible/cicd-templates'
+    ref: main
+    file: '/templates/ansible-linter.gitlab-ci.yml'
 
 stages:
   - ansible-lint
-
-ansible-lint:
-  stage: ansible-lint
-  tags:
-    - docker
-  script:
-    - ansible-lint --show-relpath .
