@@ -1,15 +1,14 @@
 ---
-
-- name: restart lighttpd
+- name: Restart lighttpd
   ansible.builtin.service:
     name: lighttpd
     state: restarted
 
-- name: reboot required
+- name: Reboot required
   ansible.builtin.reboot:
     reboot_timeout: 300
 
-- name: kill timelapse.py
+- name: Kill timelapse.py
   ansible.builtin.copy:
     content: "Please die now"
     dest: "/tmp/timelapse.kill"
