@@ -12,6 +12,6 @@
   ansible.builtin.copy:
     content: "Please die now"
     dest: "/tmp/timelapse.kill"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
