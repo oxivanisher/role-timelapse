@@ -1,10 +1,10 @@
 ---
-
 timelapse_speed_limit: 10000
 timelapse_greyworld_awb: 0
+timelapse_verbose: 0
 timelapse_awb: auto
-timelapse_exposure: auto
-timelapse_brightness: 50
+timelapse_exposure: normal
+timelapse_brightness: 0
 timelapse_upload_key: yoT2su0aew0peeVieGei0Tieveid8Ta7
 timelapse_upload_server: tl.oxi.ch
 timelapse_upload_protocol: https

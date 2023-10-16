@@ -114,6 +114,7 @@ while True:
   try:
     ret = subprocess.call(["libcamera-still",
                            "--nopreview",
+                           "--verbose", "{{ timelapse_verbose }}",
                            "--awb", "{{ timelapse_awb }}",
                            "--exposure", "{{ timelapse_exposure }}",
                            "--brightness", "{{ timelapse_brightness }}",
