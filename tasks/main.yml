@@ -1,7 +1,9 @@
 ---
 - name: Install required package
   ansible.builtin.package:
-    name: rsync
+    name:
+      - rsync
+      - libcamera-apps-lite
     state: present
 
 - name: Disable motion service
@@ -50,7 +52,9 @@
 
 - name: Install lighttpd server and imagemagick
   ansible.builtin.package:
-    name: ["lighttpd", "imagemagick"]
+    name:
+      - lighttpd
+      - imagemagick
     state: present
 
 - name: Ensure lighttpd is enabled
@@ -81,6 +85,14 @@
     path: /boot/config.txt
     regexp: "^awb_auto_is_greyworld"
     line: "awb_auto_is_greyworld={{ timelapse_greyworld_awb }}"
+  notify: Reboot required
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Enable camera overlay
+  ansible.builtin.lineinfile:
+    path: /boot/config.txt
+    regexp: "^dtoverlay=imx219"
+    line: "dtoverlay=imx219"
   notify: Reboot required
   ignore_errors: "{{ ansible_check_mode }}"
 
