@@ -112,15 +112,18 @@ while True:
 
   logging.debug('Taking picture')
   try:
-    {# good old times...
+    {#- good old times...
       ret = subprocess.call(["raspistill",
                            "--nopreview",
                            "--awb", "{{ timelapse_awb }}",
                            "--exposure", "{{ timelapse_exposure }}",
                            "--brightness", "{{ timelapse_brightness }}",
                            "-o", target_file_path],
-                          timeout=loop_time-15, stdout=subprocess.DEVNULL) #}
+                          timeout=loop_time-15, stdout=subprocess.DEVNULL) -#}
     ret = subprocess.call(["libcamera-still",
+                           "--awb", "{{ timelapse_awb }}",
+                           "--exposure", "{{ timelapse_exposure }}",
+                           "--brightness", "{{ timelapse_brightness }}",
                            "--nopreview",
                            "-o", target_file_path],
                           timeout=loop_time-15, stdout=subprocess.DEVNULL)
