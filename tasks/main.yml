@@ -72,9 +72,14 @@
     mode: "0644"
 
 # ensure mounted boot
+- name: Override config.txt location for Raspberry Pi OS version before bookworm
+  ansible.builtin.set_fact:
+    timelapse_config_dir: /boot
+  when: ansible_distribution_major_version | int < 12
+
 - name: Mount boot
   ansible.posix.mount:
-    path: /boot
+    path: "{{ timelapse_config_dir }}"
     state: mounted
     src: /dev/mmcblk0p1
     fstype: vfat
@@ -82,7 +87,7 @@
 
 - name: "Set config.txt for greyworld awb to {{ timelapse_greyworld_awb }}"
   ansible.builtin.lineinfile:
-    path: /boot/config.txt
+    path: "{{ timelapse_config_dir }}/config.txt"
     regexp: "^awb_auto_is_greyworld"
     line: "awb_auto_is_greyworld={{ timelapse_greyworld_awb }}"
   notify: Reboot required
@@ -90,7 +95,7 @@
 
 - name: Enable camera overlay
   ansible.builtin.lineinfile:
-    path: /boot/config.txt
+    path: "{{ timelapse_config_dir }}/config.txt"
     regexp: "^dtoverlay=imx219"
     line: "dtoverlay=imx219"
   notify: Reboot required

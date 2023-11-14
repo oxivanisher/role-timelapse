@@ -1,2 +1,3 @@
 ---
-# vars file for timelapse
+# vars file for octoprint
+timelapse_config_dir: /boot/firmware
