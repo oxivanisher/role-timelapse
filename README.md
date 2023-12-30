@@ -1,31 +1,47 @@
-Role Name
+timelapse
 =========
 
-A brief description of the role goes here.
+Install and configure:
+* Take pictures with libcamera-still
+* Upload mechanism for [TimelapseLiveView](https://github.com/oxivanisher/TimelapseLiveView) aka "Chickencam".
+* Upload (archive) the pictures to a rsync server
 
-Requirements
-------------
+Notes
+-----
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+It is strongly advised to also use the `oxivanisher.raspberry_pi.tmp_ramfs` as in the example below to prolong the live span of the SD cards in your Raspberry Pis!
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+| Name          | Comment                              | Default value |
+|---------------|--------------------------------------|---------------|
+| timelapse_greyworld_awb | Use the greyworld awb | `0`          |
+| timelapse_libcamera_verbose | Make libcamera-still be verbose  | `0`          |
+| timelapse_libcamera_awb | The used awb for libcamera-still | `auto`          |
+| timelapse_libcamera_exposure | The used exposure for libcamera-still | `normal`          |
+| timelapse_libcamera_brightness | The used brightness for libcamera-still | `0`          |
+| timelapse_upload_key | The key for the upload to TimelapseLiveView |       |
+| timelapse_upload_server | The key for the upload to TimelapseLiveView |           |
+| timelapse_upload_protocol | The protocol for the upload to TimelapseLiveView. Available is `https` and `http` | `https`          |
+| timelapse_upload_server_ip | The ipv4 server ip for the upload to TimelapseLiveView |           |
+| timelapse_upload_server_ip6 | The ipv6 server ip for the upload to TimelapseLiveView |           |
+| timelapse_rsync_server | Rsync server |           |
+| timelapse_rsync_user | Rsync user |           |
+| timelapse_rsync_password | Rsync password |           |
+| timelapse_rsync_path | Rsync path |           |
+| timelapse_rsync_speed_limit  | Rsync upload speed limit    | `10000`          |
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- name: Timelapse done with raspi camera
+  hosts: timelapse
+  roles:
+    - role: oxivanisher.raspberry_pi.tmp_ramfs
+    - role: oxivanisher.raspberry_pi.timelapse
+```
 
 License
 -------
@@ -35,4 +51,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+This role is part of the [oxivanisher.raspberry_pi](https://galaxy.ansible.com/ui/repo/published/oxivanisher/raspberry_pi/) collection, and the source for that is located on [github](https://github.com/oxivanisher/collection-raspberry_pi).

@@ -1,8 +1,0 @@
----
-include:
-  - project: 'ansible/cicd-templates'
-    ref: main
-    file: '/templates/ansible-linter.gitlab-ci.yml'
-
-stages:
-  - ansible-lint
