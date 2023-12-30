@@ -18,7 +18,7 @@ then
     trap 'rm -f "$LOCKFILE"; exit $?' INT TERM EXIT
 
     # copy and if successfull remove the file
-    RSYNC_PASSWORD="{{ oxiscripts.rsync.password }}" rsync --bwlimit={{ timelapse_speed_limit }} --remove-source-files --size-only --exclude="*.jpg~" --ignore-missing-args --verbose --recursive --human-readable --log-file=$LOGFILE $BASE_DIR {{ oxiscripts.rsync.user }}@{{ oxiscripts.rsync.server }}::timelapse/$HOSTNAME/
+    RSYNC_PASSWORD="{{ timelapse_rsync_password }}" rsync --bwlimit={{ timelapse_rsync_speed_limit }} --remove-source-files --size-only --exclude="*.jpg~" --ignore-missing-args --verbose --recursive --human-readable --log-file=$LOGFILE $BASE_DIR {{ timelapse_rsync_user }}@{{ timelapse_rsync_server }}::{{ timelapse_rsync_path }}/$HOSTNAME/
 
     # remove empty dirs
     find $BASE_DIR -type d -mtime +1 -empty -delete

@@ -1,12 +1,16 @@
 ---
-timelapse_speed_limit: 10000
 timelapse_greyworld_awb: 0
-timelapse_verbose: 0
-timelapse_awb: auto
-timelapse_exposure: normal
-timelapse_brightness: 0
-timelapse_upload_key: yoT2su0aew0peeVieGei0Tieveid8Ta7
-timelapse_upload_server: tl.oxi.ch
+timelapse_libcamera_verbose: 0
+timelapse_libcamera_awb: auto
+timelapse_libcamera_exposure: normal
+timelapse_libcamera_brightness: 0
+timelapse_upload_key:
+timelapse_upload_server:
 timelapse_upload_protocol: https
-timelapse_upload_server_ip: 136.243.54.45
-timelapse_upload_server_ip6: 2a01:4f8:212:151a::2
+timelapse_upload_server_ip:
+timelapse_upload_server_ip6:
+timelapse_rsync_server:
+timelapse_rsync_user:
+timelapse_rsync_password:
+timelapse_rsync_path:
+timelapse_rsync_speed_limit: 10000
