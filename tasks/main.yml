@@ -11,23 +11,6 @@
     name: motion
     masked: true
 
-# remove legacy cron stuff. can be removed after deployment to all nodes
-- name: Remove legacy timelapse cronjob
-  ansible.builtin.cron:
-    name: "Take timelapse pictures"
-    minute: "*"
-    hour: "*"
-    job: "/usr/bin/python3 /opt/timelapse/timelapse.py"
-    state: absent
-
-- name: Remove legacy timelapse-sync cronjob
-  ansible.builtin.cron:
-    name: "Sync timelapse pictures"
-    minute: "*/5"
-    hour: "*"
-    job: "perl -le 'sleep rand 150' && /opt/timelapse/timelapse-sync.sh >/dev/null"
-    state: absent
-
 - name: Ensure path for scripts (/opt/timelapse)
   ansible.builtin.file:
     path: /opt/timelapse
