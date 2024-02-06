@@ -43,7 +43,7 @@
     owner: root
     group: root
     mode: "0750"
-    
+
 - name: Deploy timelapse systemd service unit
   ansible.builtin.template:
     src: timelapse.service.jinja2
@@ -59,6 +59,7 @@
     state: started
     enabled: true
     daemon_reload: true
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Deploy timelapse-sync script
   ansible.builtin.template:
@@ -91,6 +92,7 @@
     state: started
     enabled: true
     daemon_reload: true
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Install lighttpd server and imagemagick
   ansible.builtin.package:
