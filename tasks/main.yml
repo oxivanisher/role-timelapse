@@ -26,16 +26,25 @@
     owner: root
     group: root
     mode: "0750"
+
+- name: Deploy timelapse systemd service unit
+  ansible.builtin.template:
+    src: timelapse.service.jinja2
+    dest: /etc/systemd/system/timelapse.service
+    owner: root
+    group: root
+    mode: "0644"
   notify: Kill timelapse.py
 
-- name: Ensure timelapse cronjob
-  ansible.builtin.cron:
-    name: "Take timelapse pictures"
-    minute: "*"
-    hour: "*"
-    job: "/usr/bin/python3 /opt/timelapse/timelapse.py"
+- name: Enable the timelapse systemd service unit
+  ansible.builtin.systemd_service:
+    name: timelapse.service
+    state: started
+    enabled: true
+    daemon_reload: true
+  ignore_errors: "{{ ansible_check_mode }}"
 
-- name: Deploy timelapse sync script
+- name: Deploy timelapse-sync script
   ansible.builtin.template:
     src: timelapse-sync.sh.jinja2
     dest: /opt/timelapse/timelapse-sync.sh
@@ -43,12 +52,29 @@
     group: root
     mode: "0750"
 
-- name: Ensure timelapse upload cronjob
-  ansible.builtin.cron:
-    name: "Sync timelapse pictures"
-    minute: "*/5"
-    hour: "*"
-    job: "perl -le 'sleep rand 150' && /opt/timelapse/timelapse-sync.sh >/dev/null"
+- name: Deploy timelapse-sync systemd service unit
+  ansible.builtin.template:
+    src: timelapse-sync.service.jinja2
+    dest: /etc/systemd/system/timelapse-sync.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Deploy timelapse-sync systemd timer unit
+  ansible.builtin.template:
+    src: timelapse-sync.timer.jinja2
+    dest: /etc/systemd/system/timelapse-sync.timer
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable the timelapse-sync systemd timer unit
+  ansible.builtin.systemd_service:
+    name: timelapse-sync.timer
+    state: started
+    enabled: true
+    daemon_reload: true
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Install lighttpd server and imagemagick
   ansible.builtin.package:
