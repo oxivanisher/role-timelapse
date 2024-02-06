@@ -1,0 +1,9 @@
+[Unit]
+Description=Timelapse picture upload
+
+[Service]
+Type=oneshot
+ExecStart=/opt/timelapse/timelapse-sync.sh 
+
+[Install]
+WantedBy=multi-user.target
