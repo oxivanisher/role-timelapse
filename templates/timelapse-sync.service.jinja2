@@ -1,9 +1,18 @@
 [Unit]
 Description=Timelapse picture upload
+After=network.target
 
 [Service]
+ExecStart=/opt/timelapse/timelapse-sync.sh
+WorkingDirectory=/opt/timelapse/
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=timelapse-sync
+NotifyAccess=all
+User=root
+Group=root
+Nice=1
 Type=oneshot
-ExecStart=/opt/timelapse/timelapse-sync.sh 
 
 [Install]
 WantedBy=multi-user.target

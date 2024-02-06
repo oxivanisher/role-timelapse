@@ -2,10 +2,19 @@
 Description=Timelapse picture gathering
 
 [Service]
-Type=simple
 ExecStart=/usr/bin/python3 /opt/timelapse/timelapse.py
+WorkingDirectory=/opt/timelapse/
 Restart=always
-RestartSec=3
+RestartSec=5
+KillSignal=SIGTERM
+Type=simple
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=timelapse
+NotifyAccess=all
+User=root
+Group=root
+Nice=1
 
 [Install]
 WantedBy=multi-user.target
