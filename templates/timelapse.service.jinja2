@@ -1,0 +1,10 @@
+[Unit]
+Description=Timelapse picture gathering
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/timelapse/timelapse.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
