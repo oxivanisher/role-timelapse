@@ -76,7 +76,6 @@
     owner: root
     group: root
     mode: "0644"
-    daemon_reload: true
 
 - name: Deploy timelapse-sync systemd timer unit
   ansible.builtin.template:
