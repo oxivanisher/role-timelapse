@@ -8,7 +8,7 @@
 - name: Use rpicam for Raspberry OS >= 12
   ansible.builtin.set_fact:
     rpicam_still_binary: rpicam-still
-    rpicam_apps_package: rpicam_apps_package
+    rpicam_apps_package: rpicam-apps-lite
   when: ansible_distribution_version >= '12'
 
 - name: Install required package
