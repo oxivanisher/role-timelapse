@@ -112,7 +112,7 @@ while True:
 
   logging.debug('Taking picture')
   try:
-    ret = subprocess.call(["libcamera-still",
+    ret = subprocess.call(["{{ rpicam_still_binary }}",
                            "--nopreview",
                            "--verbose", "{{ timelapse_libcamera_verbose }}",
                            "--awb", "{{ timelapse_libcamera_awb }}",

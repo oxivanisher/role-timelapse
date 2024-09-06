@@ -2,7 +2,7 @@ timelapse
 =========
 
 Install and configure:
-* Take pictures with libcamera-still
+* Take pictures with rpicam-still (libcamera-still on Raspberry OS < 12>)
 * Upload mechanism for [TimelapseLiveView](https://github.com/oxivanisher/TimelapseLiveView) aka "Chickencam".
 * Upload (archive) the pictures to a rsync server
 
@@ -17,10 +17,10 @@ Role Variables
 | Name          | Comment                              | Default value |
 |---------------|--------------------------------------|---------------|
 | timelapse_greyworld_awb | Use the greyworld awb | `0`          |
-| timelapse_libcamera_verbose | Make libcamera-still be verbose  | `0`          |
-| timelapse_libcamera_awb | The used awb for libcamera-still | `auto`          |
-| timelapse_libcamera_exposure | The used exposure for libcamera-still | `normal`          |
-| timelapse_libcamera_brightness | The used brightness for libcamera-still | `0`          |
+| timelapse_libcamera_verbose | Make rpicam-still be verbose  | `0`          |
+| timelapse_libcamera_awb | The used awb for rpicam-still | `auto`          |
+| timelapse_libcamera_exposure | The used exposure for rpicam-still | `normal`          |
+| timelapse_libcamera_brightness | The used brightness for rpicam-still | `0`          |
 | timelapse_upload_key | The key for the upload to TimelapseLiveView |       |
 | timelapse_upload_server | The key for the upload to TimelapseLiveView |           |
 | timelapse_upload_protocol | The protocol for the upload to TimelapseLiveView. Available is `https` and `http` | `https`          |
