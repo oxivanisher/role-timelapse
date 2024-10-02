@@ -48,8 +48,8 @@
   become_user: root
 
 - name: Deploy timelapse systemd service unit
-  ansible.builtin.template:
-    src: timelapse.service.jinja2
+  ansible.builtin.copy:
+    src: timelapse.service
     dest: /etc/systemd/system/timelapse.service
     owner: root
     group: root
@@ -79,8 +79,8 @@
   become_user: root
 
 - name: Deploy timelapse-sync systemd service unit
-  ansible.builtin.template:
-    src: timelapse-sync.service.jinja2
+  ansible.builtin.copy:
+    src: timelapse-sync.service
     dest: /etc/systemd/system/timelapse-sync.service
     owner: root
     group: root
@@ -89,8 +89,8 @@
   become_user: root
 
 - name: Deploy timelapse-sync systemd timer unit
-  ansible.builtin.template:
-    src: timelapse-sync.timer.jinja2
+  ansible.builtin.copy:
+    src: timelapse-sync.timer
     dest: /etc/systemd/system/timelapse-sync.timer
     owner: root
     group: root
