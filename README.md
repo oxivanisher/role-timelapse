@@ -1,5 +1,6 @@
 timelapse
 =========
+[![Ansible Lint](https://github.com/oxivanisher/role-timelapse/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/oxivanisher/role-timelapse/actions/workflows/ansible-lint.yml)
 
 Install and configure:
 * Take pictures with rpicam-still (libcamera-still on Raspberry OS < 12>)
