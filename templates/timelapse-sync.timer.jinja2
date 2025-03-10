@@ -1,0 +1,10 @@
+[Unit]
+Description=Timelapse rsync images upload
+
+[Timer]
+Unit=timelapse-sync.service
+OnCalendar={{ timelapse_upload_every }}
+RandomizedDelaySec={{ timelapse_upload_ransomization }}
+
+[Install]
+WantedBy=timers.target

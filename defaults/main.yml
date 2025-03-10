@@ -9,6 +9,8 @@ timelapse_upload_server:
 timelapse_upload_protocol: https
 timelapse_upload_server_ip:
 timelapse_upload_server_ip6:
+timelapse_upload_every: "*:7/37"
+timelapse_upload_ransomization: 120
 timelapse_rsync_server:
 timelapse_rsync_user:
 timelapse_rsync_password:

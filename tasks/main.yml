@@ -89,8 +89,8 @@
   become_user: root
 
 - name: Deploy timelapse-sync systemd timer unit
-  ansible.builtin.copy:
-    src: timelapse-sync.timer
+  ansible.builtin.template:
+    src: timelapse-sync.timer.jinja2
     dest: /etc/systemd/system/timelapse-sync.timer
     owner: root
     group: root

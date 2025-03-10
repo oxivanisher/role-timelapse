@@ -27,6 +27,8 @@ Role Variables
 | timelapse_upload_protocol | The protocol for the upload to TimelapseLiveView. Available is `https` and `http` | `https`          |
 | timelapse_upload_server_ip | The ipv4 server ip for the upload to TimelapseLiveView |           |
 | timelapse_upload_server_ip6 | The ipv6 server ip for the upload to TimelapseLiveView |           |
+| timelapse_upload_every | The systemd timer seting when to trigger uploads | `*:0/30` |
+| timelapse_upload_ransomization | The systemd time randomization in seconds | `120` |
 | timelapse_rsync_server | Rsync server |           |
 | timelapse_rsync_user | Rsync user |           |
 | timelapse_rsync_password | Rsync password |           |
