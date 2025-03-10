@@ -108,24 +108,24 @@
   become: true
   become_user: root
 
-- name: Deploy timelapse-sync-b4shutdown systemd service unit
-  ansible.builtin.copy:
-    src: timelapse-sync-b4shutdown.service
-    dest: /etc/systemd/system/timelapse-sync-b4shutdown.service
-    owner: root
-    group: root
-    mode: "0644"
-  become: true
-  become_user: root
+# - name: Deploy timelapse-sync-b4shutdown systemd service unit
+#   ansible.builtin.copy:
+#     src: timelapse-sync-b4shutdown.service
+#     dest: /etc/systemd/system/timelapse-sync-b4shutdown.service
+#     owner: root
+#     group: root
+#     mode: "0644"
+#   become: true
+#   become_user: root
 
-- name: Enable the timelapse-sync-b4shutdown systemd service unit
-  ansible.builtin.systemd_service:
-    name: timelapse-sync-b4shutdown.service
-    enabled: true
-    daemon_reload: true
-  ignore_errors: "{{ ansible_check_mode }}"
-  become: true
-  become_user: root
+# - name: Enable the timelapse-sync-b4shutdown systemd service unit
+#   ansible.builtin.systemd_service:
+#     name: timelapse-sync-b4shutdown.service
+#     enabled: true
+#     daemon_reload: true
+#   ignore_errors: "{{ ansible_check_mode }}"
+#   become: true
+#   become_user: root
 
 - name: Install lighttpd server and imagemagick
   ansible.builtin.package:

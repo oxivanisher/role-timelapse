@@ -1,10 +1,8 @@
 [Unit]
 Description=Timelapse picture upload before shutdown
 DefaultDependencies=no
-Before=network.target local-fs.target umount.target shutdown.target reboot.target halt.target
-Conflicts=shutdown.target
-Requires=network-online.target
-After=network-online.target
+Before=shutdown.target umount.target network-pre.target NetworkManager.service
+After=local-fs.target network-online.target
 
 [Service]
 ExecStart=/opt/timelapse/timelapse-sync.sh
@@ -16,6 +14,7 @@ User=root
 Group=root
 Nice=1
 Type=oneshot
+RemainAfterExit=true
 
 [Install]
-WantedBy=final.target
+WantedBy=halt.target poweroff.target reboot.target
