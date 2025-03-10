@@ -80,11 +80,13 @@
 
 - name: Ensure the sync is called on system shutdown
   ansible.builtin.file:
-    src: /usr/lib/systemd/system-shutdown/timelapse-sync.sh
-    dest: /opt/timelapse/timelapse-sync.sh
+    src: /opt/timelapse/timelapse-sync.sh
+    dest: /usr/lib/systemd/system-shutdown/timelapse-sync.sh
     owner: root
     group: root
     state: link
+  become: true
+  become_user: root
 
 - name: Deploy timelapse-sync systemd service unit
   ansible.builtin.copy:
