@@ -1,0 +1,12 @@
+[Unit]
+Description=Timelapse picture upload before shutdown
+DefaultDependencies=no
+Before=halt.target shutdown.target reboot.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/timelapse/timelapse-sync.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=halt.target shutdown.target reboot.target
