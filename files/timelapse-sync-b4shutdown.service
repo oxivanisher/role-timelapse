@@ -4,8 +4,15 @@ DefaultDependencies=no
 Before=halt.target shutdown.target reboot.target
 
 [Service]
-Type=oneshot
 ExecStart=/opt/timelapse/timelapse-sync.sh
+WorkingDirectory=/opt/timelapse/
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=timelapse-sync
+User=root
+Group=root
+Nice=1
+Type=oneshot
 RemainAfterExit=yes
 
 [Install]
