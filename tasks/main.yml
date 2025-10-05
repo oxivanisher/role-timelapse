@@ -44,6 +44,7 @@
     owner: root
     group: root
     mode: "0750"
+  notify: Kill timelapse.py
   become: true
   become_user: root
 
