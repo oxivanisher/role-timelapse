@@ -110,22 +110,23 @@ while True:
     os.mkdir(os.path.join(working_dir, date_str))
 
 
+  command = ["{{ rpicam_still_binary }}",
+             "--nopreview",
+             "--verbose", "{{ timelapse_libcamera_verbose }}",
+             "--awb", "{{ timelapse_libcamera_awb }}",
+             "--exposure", "{{ timelapse_libcamera_exposure }}",
+             "--brightness", "{{ timelapse_libcamera_brightness }}",
+             "-o", target_file_path]
+
   logging.debug('Taking picture')
   try:
-    ret = subprocess.call(["{{ rpicam_still_binary }}",
-                           "--nopreview",
-                           "--verbose", "{{ timelapse_libcamera_verbose }}",
-                           "--awb", "{{ timelapse_libcamera_awb }}",
-                           "--exposure", "{{ timelapse_libcamera_exposure }}",
-                           "--brightness", "{{ timelapse_libcamera_brightness }}",
-                           "-o", target_file_path],
-                          timeout=loop_time-15, stdout=subprocess.DEVNULL)
+    ret = subprocess.call(command, timeout=loop_time-15, stdout=subprocess.DEVNULL)
     timeout_counter = 0
   except subprocess.TimeoutExpired:
     timeout_counter += 1
 
   if ret:
-    logging.warning("Aborting current loop, because {{ rpicam_still_binary }} had some error. Waiting 3 seconds and restarting loop.")
+    logging.warning("Aborting current loop, because {{ rpicam_still_binary }} had some error:\n%s\nWaiting 3 seconds and restarting loop." % ' '.join(command))
     time.sleep(3)
     continue
 
