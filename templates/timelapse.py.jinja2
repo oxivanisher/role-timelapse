@@ -125,7 +125,7 @@ while True:
     timeout_counter += 1
 
   if ret:
-    logging.warning("Aborting current loop, because raspistill had some error. Waiting 3 seconds and restarting loop.")
+    logging.warning("Aborting current loop, because {{ rpicam_still_binary }} had some error. Waiting 3 seconds and restarting loop.")
     time.sleep(3)
     continue
 
