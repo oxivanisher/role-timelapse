@@ -3,13 +3,13 @@
   ansible.builtin.set_fact:
     rpicam_still_binary: libcamera-still
     rpicam_apps_package: libcamera-apps-lite
-  when: ansible_distribution_version < '12'
+  when: ansible_facts.distribution_version < '12'
 
 - name: Use rpicam for Raspberry OS >= 12
   ansible.builtin.set_fact:
     rpicam_still_binary: rpicam-still
     rpicam_apps_package: rpicam-apps-lite
-  when: ansible_distribution_version >= '12'
+  when: ansible_facts.distribution_version >= '12'
 
 - name: Install required package
   ansible.builtin.package:
@@ -159,7 +159,7 @@
 - name: Override config.txt location for Raspberry Pi OS version before bookworm
   ansible.builtin.set_fact:
     timelapse_config_dir: /boot
-  when: ansible_distribution_major_version | int < 12
+  when: ansible_facts.distribution_major_version | int < 12
 
 - name: Mount boot
   ansible.posix.mount:
