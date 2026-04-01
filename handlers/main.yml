@@ -4,13 +4,11 @@
     name: lighttpd
     state: restarted
   become: true
-  become_user: root
 
 - name: Reboot required
   ansible.builtin.reboot:
     reboot_timeout: 300
   become: true
-  become_user: root
 
 - name: Kill timelapse.py
   ansible.builtin.copy:
@@ -20,4 +18,3 @@
     owner: root
     group: root
   become: true
-  become_user: root

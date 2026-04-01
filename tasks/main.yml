@@ -18,14 +18,12 @@
       - "{{ rpicam_apps_package }}"
     state: present
   become: true
-  become_user: root
 
 - name: Disable motion service
   ansible.builtin.systemd:
     name: motion
     masked: true
   become: true
-  become_user: root
 
 - name: Ensure path for scripts (/opt/timelapse)
   ansible.builtin.file:
@@ -35,7 +33,6 @@
     group: root
     mode: "0750"
   become: true
-  become_user: root
 
 - name: Deploy timelapse script
   ansible.builtin.template:
@@ -46,7 +43,6 @@
     mode: "0750"
   notify: Kill timelapse.py
   become: true
-  become_user: root
 
 - name: Deploy timelapse systemd service unit
   ansible.builtin.copy:
@@ -57,7 +53,6 @@
     mode: "0644"
   notify: Kill timelapse.py
   become: true
-  become_user: root
 
 - name: Enable the timelapse systemd service unit
   ansible.builtin.systemd_service:
@@ -67,7 +62,6 @@
     daemon_reload: true
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: Deploy timelapse-sync script
   ansible.builtin.template:
@@ -77,7 +71,6 @@
     group: root
     mode: "0750"
   become: true
-  become_user: root
 
 - name: Deploy timelapse-sync systemd service unit
   ansible.builtin.copy:
@@ -87,7 +80,6 @@
     group: root
     mode: "0644"
   become: true
-  become_user: root
 
 - name: Deploy timelapse-sync systemd timer unit
   ansible.builtin.template:
@@ -97,7 +89,6 @@
     group: root
     mode: "0644"
   become: true
-  become_user: root
 
 - name: Enable the timelapse-sync systemd timer unit
   ansible.builtin.systemd_service:
@@ -107,7 +98,6 @@
     daemon_reload: true
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 # - name: Deploy timelapse-sync-b4shutdown systemd service unit
 #   ansible.builtin.copy:
@@ -117,7 +107,7 @@
 #     group: root
 #     mode: "0644"
 #   become: true
-#   become_user: root
+#
 
 # - name: Enable the timelapse-sync-b4shutdown systemd service unit
 #   ansible.builtin.systemd_service:
@@ -126,7 +116,7 @@
 #     daemon_reload: true
 #   ignore_errors: "{{ ansible_check_mode }}"
 #   become: true
-#   become_user: root
+#
 
 - name: Install lighttpd server and imagemagick
   ansible.builtin.package:
@@ -135,7 +125,6 @@
       - imagemagick
     state: present
   become: true
-  become_user: root
 
 - name: Ensure lighttpd is enabled
   ansible.builtin.systemd:
@@ -143,7 +132,6 @@
     state: started
     enabled: true
   become: true
-  become_user: root
 
 - name: Deploy index.html file
   ansible.builtin.copy:
@@ -153,7 +141,6 @@
     group: www-data
     mode: "0644"
   become: true
-  become_user: root
 
 # ensure mounted boot
 - name: Override config.txt location for Raspberry Pi OS version before bookworm
@@ -169,7 +156,6 @@
     fstype: vfat
   changed_when: false
   become: true
-  become_user: root
 
 - name: "Set config.txt for greyworld awb to {{ timelapse_greyworld_awb }}"
   ansible.builtin.lineinfile:
@@ -179,7 +165,6 @@
   notify: Reboot required
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: Enable camera overlay
   ansible.builtin.lineinfile:
@@ -189,7 +174,6 @@
   notify: Reboot required
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  become_user: root
 
 - name: "Ensure the tl upload server can be looked up"
   ansible.builtin.lineinfile:
@@ -197,7 +181,6 @@
     regexp: "timelapse_upload_server ipv4"
     line: "{{ timelapse_upload_server_ip }}      {{ timelapse_upload_server }} #timelapse_upload_server ipv4"
   become: true
-  become_user: root
 
 - name: "Ensure the tl upload server can be looked up via ipv6"
   ansible.builtin.lineinfile:
@@ -205,4 +188,3 @@
     regexp: "timelapse_upload_server ipv6"
     line: "{{ timelapse_upload_server_ip6 }}      {{ timelapse_upload_server }} #timelapse_upload_server ipv6"
   become: true
-  become_user: root
